@@ -2,7 +2,7 @@ from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database.base import Base
-
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 class User(Base):
     __tablename__ = "users"
@@ -19,4 +19,9 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(
         String(255),
         nullable=False,
+    )
+
+    projects: Mapped[list["Project"]] = relationship(
+    back_populates="user",
+    cascade="all, delete-orphan",
     )
