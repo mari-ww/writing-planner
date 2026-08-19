@@ -1,13 +1,15 @@
-from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 
 class User(Base):
     __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(
+        primary_key=True
+    )
 
     email: Mapped[str] = mapped_column(
         String(255),
@@ -21,7 +23,13 @@ class User(Base):
         nullable=False,
     )
 
+    daily_word_goal: Mapped[int] = mapped_column(
+        Integer,
+        default=500,
+        nullable=False,
+    )
+
     projects: Mapped[list["Project"]] = relationship(
-    back_populates="user",
-    cascade="all, delete-orphan",
+        back_populates="user",
+        cascade="all, delete-orphan",
     )
