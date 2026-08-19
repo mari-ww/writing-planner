@@ -4,21 +4,21 @@ from sqlalchemy.orm import Session
 from app.core.security import get_current_user
 from app.database.session import get_db
 from app.models.user import User
-from app.schemas.chapter import (
-    ChapterCreate,
-    ChapterResponse,
-    ChapterUpdate,
+from app.schemas.character import (
+    CharacterCreate,
+    CharacterResponse,
+    CharacterUpdate,
 )
-from app.services.chapter import ChapterService
+from app.services.character import CharacterService
 from app.services.project import ProjectService
 
 
 router = APIRouter(
-    prefix="/projects/{project_id}/chapters",
-    tags=["Chapters"],
+    prefix="/projects/{project_id}/characters",
+    tags=["Characters"],
 )
 
-chapter_service = ChapterService()
+character_service = CharacterService()
 project_service = ProjectService()
 
 
@@ -36,12 +36,12 @@ def get_project_for_current_user(
 
 @router.post(
     "",
-    response_model=ChapterResponse,
+    response_model=CharacterResponse,
     status_code=status.HTTP_201_CREATED,
 )
-def create_chapter(
+def create_character(
     project_id: int,
-    data: ChapterCreate,
+    data: CharacterCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -51,7 +51,7 @@ def create_chapter(
         current_user,
     )
 
-    return chapter_service.create(
+    return character_service.create(
         db,
         project,
         data,
@@ -60,9 +60,9 @@ def create_chapter(
 
 @router.get(
     "",
-    response_model=list[ChapterResponse],
+    response_model=list[CharacterResponse],
 )
-def list_chapters(
+def list_characters(
     project_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -73,18 +73,19 @@ def list_chapters(
         current_user,
     )
 
-    return chapter_service.list_by_project(
+    return character_service.list_by_project(
         db,
         project,
     )
+
 
 @router.get(
-    "/{chapter_id}",
-    response_model=ChapterResponse,
+    "/{character_id}",
+    response_model=CharacterResponse,
 )
-def get_chapter(
+def get_character(
     project_id: int,
-    chapter_id: int,
+    character_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -94,21 +95,50 @@ def get_chapter(
         current_user,
     )
 
-    chapter = chapter_service.get_owned_chapter(
+    return character_service.get_project_character(
         db,
-        chapter_id,
+        character_id,
         project,
     )
 
-    return chapter_service.to_response(chapter)
+
+@router.patch(
+    "/{character_id}",
+    response_model=CharacterResponse,
+)
+def update_character(
+    project_id: int,
+    character_id: int,
+    data: CharacterUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    project = get_project_for_current_user(
+        project_id,
+        db,
+        current_user,
+    )
+
+    character = character_service.get_project_character(
+        db,
+        character_id,
+        project,
+    )
+
+    return character_service.update(
+        db,
+        character,
+        data,
+    )
+
 
 @router.delete(
-    "/{chapter_id}",
+    "/{character_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-def delete_chapter(
+def delete_character(
     project_id: int,
-    chapter_id: int,
+    character_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -118,13 +148,13 @@ def delete_chapter(
         current_user,
     )
 
-    chapter = chapter_service.get_owned_chapter(
+    character = character_service.get_project_character(
         db,
-        chapter_id,
+        character_id,
         project,
     )
 
-    chapter_service.delete(db, chapter)
+    character_service.delete(db, character)
 
     return Response(
         status_code=status.HTTP_204_NO_CONTENT

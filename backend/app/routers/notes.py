@@ -4,21 +4,21 @@ from sqlalchemy.orm import Session
 from app.core.security import get_current_user
 from app.database.session import get_db
 from app.models.user import User
-from app.schemas.chapter import (
-    ChapterCreate,
-    ChapterResponse,
-    ChapterUpdate,
+from app.schemas.note import (
+    NoteCreate,
+    NoteResponse,
+    NoteUpdate,
 )
-from app.services.chapter import ChapterService
+from app.services.note import NoteService
 from app.services.project import ProjectService
 
 
 router = APIRouter(
-    prefix="/projects/{project_id}/chapters",
-    tags=["Chapters"],
+    prefix="/projects/{project_id}/notes",
+    tags=["Notes"],
 )
 
-chapter_service = ChapterService()
+note_service = NoteService()
 project_service = ProjectService()
 
 
@@ -36,12 +36,12 @@ def get_project_for_current_user(
 
 @router.post(
     "",
-    response_model=ChapterResponse,
+    response_model=NoteResponse,
     status_code=status.HTTP_201_CREATED,
 )
-def create_chapter(
+def create_note(
     project_id: int,
-    data: ChapterCreate,
+    data: NoteCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -51,7 +51,7 @@ def create_chapter(
         current_user,
     )
 
-    return chapter_service.create(
+    return note_service.create(
         db,
         project,
         data,
@@ -60,9 +60,9 @@ def create_chapter(
 
 @router.get(
     "",
-    response_model=list[ChapterResponse],
+    response_model=list[NoteResponse],
 )
-def list_chapters(
+def list_notes(
     project_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -73,18 +73,19 @@ def list_chapters(
         current_user,
     )
 
-    return chapter_service.list_by_project(
+    return note_service.list_by_project(
         db,
         project,
     )
+
 
 @router.get(
-    "/{chapter_id}",
-    response_model=ChapterResponse,
+    "/{note_id}",
+    response_model=NoteResponse,
 )
-def get_chapter(
+def get_note(
     project_id: int,
-    chapter_id: int,
+    note_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -94,21 +95,50 @@ def get_chapter(
         current_user,
     )
 
-    chapter = chapter_service.get_owned_chapter(
+    return note_service.get_project_note(
         db,
-        chapter_id,
+        note_id,
         project,
     )
 
-    return chapter_service.to_response(chapter)
+
+@router.patch(
+    "/{note_id}",
+    response_model=NoteResponse,
+)
+def update_note(
+    project_id: int,
+    note_id: int,
+    data: NoteUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    project = get_project_for_current_user(
+        project_id,
+        db,
+        current_user,
+    )
+
+    note = note_service.get_project_note(
+        db,
+        note_id,
+        project,
+    )
+
+    return note_service.update(
+        db,
+        note,
+        data,
+    )
+
 
 @router.delete(
-    "/{chapter_id}",
+    "/{note_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-def delete_chapter(
+def delete_note(
     project_id: int,
-    chapter_id: int,
+    note_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -118,13 +148,13 @@ def delete_chapter(
         current_user,
     )
 
-    chapter = chapter_service.get_owned_chapter(
+    note = note_service.get_project_note(
         db,
-        chapter_id,
+        note_id,
         project,
     )
 
-    chapter_service.delete(db, chapter)
+    note_service.delete(db, note)
 
     return Response(
         status_code=status.HTTP_204_NO_CONTENT

@@ -38,7 +38,17 @@ class Project(Base):
     )
 
     chapters: Mapped[list["Chapter"]] = relationship(
-    back_populates="project",
-    cascade="all, delete-orphan",
-    order_by="Chapter.position",
+        back_populates="project",
+        cascade="all, delete-orphan",
+        order_by="Chapter.position",
+    )
+
+    characters: Mapped[list["Character"]] = relationship(
+        back_populates="project",
+        cascade="all, delete-orphan",
+    )
+
+    notes: Mapped[list["Note"]] = relationship(
+        back_populates="project",
+        cascade="all, delete-orphan",
     )
