@@ -8,6 +8,8 @@ services:
       - ./backend:/app
     env_file:
       - .env
+    environment:
+      PYTHONPATH: /app
     depends_on:
       - postgres
 
