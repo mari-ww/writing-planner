@@ -3,7 +3,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
 
-
 class Project(Base):
     __tablename__ = "projects"
 
@@ -36,4 +35,10 @@ class Project(Base):
 
     user: Mapped["User"] = relationship(
         back_populates="projects"
+    )
+
+    chapters: Mapped[list["Chapter"]] = relationship(
+    back_populates="project",
+    cascade="all, delete-orphan",
+    order_by="Chapter.position",
     )
