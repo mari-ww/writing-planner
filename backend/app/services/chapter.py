@@ -8,18 +8,33 @@ from app.schemas.chapter import (
     ChapterCreate,
     ChapterUpdate,
 )
-
+from app.services.writing import count_words
+from app.schemas.chapter import (
+        ChapterCreate,
+        ChapterResponse,
+        ChapterUpdate,
+    )
 
 class ChapterService:
     def __init__(self):
         self.repository = ChapterRepository()
+
+    def to_response(self, chapter: Chapter) -> ChapterResponse:
+        return ChapterResponse(
+            id=chapter.id,
+            title=chapter.title,
+            content=chapter.content,
+            position=chapter.position,
+            project_id=chapter.project_id,
+            word_count=count_words(chapter.content),
+        )
 
     def create(
         self,
         db: Session,
         project: Project,
         data: ChapterCreate,
-    ) -> Chapter:
+    ) -> ChapterResponse:
         position = self.repository.get_next_position(
             db,
             project.id,
@@ -32,17 +47,24 @@ class ChapterService:
             project_id=project.id,
         )
 
-        return self.repository.create(db, chapter)
+        chapter = self.repository.create(db, chapter)
+
+        return self.to_response(chapter)
 
     def list_by_project(
         self,
         db: Session,
         project: Project,
-    ) -> list[Chapter]:
-        return self.repository.get_by_project(
+    ) -> list[ChapterResponse]:
+        chapters = self.repository.get_by_project(
             db,
             project.id,
         )
+
+        return [
+            self.to_response(chapter)
+            for chapter in chapters
+        ]
 
     def get_owned_chapter(
         self,
@@ -74,7 +96,7 @@ class ChapterService:
         db: Session,
         chapter: Chapter,
         data: ChapterUpdate,
-    ) -> Chapter:
+    ) -> ChapterResponse:
         update_data = data.model_dump(
             exclude_unset=True
         )
@@ -85,7 +107,7 @@ class ChapterService:
         db.commit()
         db.refresh(chapter)
 
-        return chapter
+        return self.to_response(chapter)
 
     def delete(
         self,

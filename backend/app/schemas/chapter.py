@@ -24,6 +24,7 @@ class ChapterResponse(BaseModel):
     content: str
     position: int
     project_id: int
+    word_count: int
 
     model_config = {
         "from_attributes": True,
