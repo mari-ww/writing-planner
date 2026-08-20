@@ -1,15 +1,14 @@
 import { apiRequest } from './client'
-import type {
-  TokenResponse,
-  User,
-} from '../types/user'
+import type { TokenResponse, User } from '../types/user'
 
-interface AuthData {
+interface AuthCredentials {
   email: string
   password: string
 }
 
-export function register(data: AuthData) {
+export function register(
+  data: AuthCredentials,
+): Promise<User> {
   return apiRequest<User>(
     '/auth/register',
     {
@@ -19,7 +18,9 @@ export function register(data: AuthData) {
   )
 }
 
-export function login(data: AuthData) {
+export function login(
+  data: AuthCredentials,
+): Promise<TokenResponse> {
   return apiRequest<TokenResponse>(
     '/auth/login',
     {
