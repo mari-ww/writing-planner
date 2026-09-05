@@ -3,19 +3,24 @@ import type { FormEvent } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import { getProject } from '../api/projects'
+
 import {
   createChapter,
   getChapters,
 } from '../api/chapters'
+
 import {
   createTask,
   getTasks,
   updateTask,
 } from '../api/tasks'
 
+import { getProjectStatistics } from '../api/statistics'
+
 import type { Project } from '../types/project'
 import type { Chapter } from '../types/chapter'
 import type { Task } from '../types/task'
+import type { ProjectStatistics } from '../types/statistics'
 
 function ProjectPage() {
   const { projectId } = useParams()
@@ -23,6 +28,8 @@ function ProjectPage() {
   const [project, setProject] = useState<Project | null>(null)
   const [chapters, setChapters] = useState<Chapter[]>([])
   const [tasks, setTasks] = useState<Task[]>([])
+  const [statistics, setStatistics] =
+    useState<ProjectStatistics | null>(null)
 
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -48,15 +55,18 @@ function ProjectPage() {
           projectData,
           chaptersData,
           tasksData,
+          statisticsData,
         ] = await Promise.all([
           getProject(id),
           getChapters(id),
           getTasks(id),
+          getProjectStatistics(id),
         ])
 
         setProject(projectData)
         setChapters(chaptersData)
         setTasks(tasksData)
+        setStatistics(statisticsData)
       } catch (error) {
         setError(
           error instanceof Error
@@ -198,6 +208,43 @@ function ProjectPage() {
       {project.genre && <p>{project.genre}</p>}
 
       {error && <p>{error}</p>}
+
+      <section>
+        <h2>Writing Progress</h2>
+
+        {statistics && (
+          <>
+            <p>
+              {statistics.total_words} total words
+            </p>
+
+            <p>
+              {statistics.chapter_count} chapters
+            </p>
+
+            <p>
+              {statistics.average_words_per_chapter.toFixed(0)}
+              {' '}average words per chapter
+            </p>
+
+            <p>
+              Daily goal:{' '}
+              {statistics.daily_word_progress}
+              {' / '}
+              {statistics.daily_word_goal} words
+            </p>
+
+            <progress
+              value={statistics.daily_goal_percentage}
+              max="100"
+            />
+
+            <p>
+              {statistics.daily_goal_percentage.toFixed(0)}%
+            </p>
+          </>
+        )}
+      </section>
 
       <section>
         <h2>Chapters</h2>
