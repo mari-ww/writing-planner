@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 
-import { createProject, getProjects } from '../api/projects'
+import {
+  createProject,
+  getProjects,
+} from '../api/projects'
+
 import type { Project } from '../types/project'
 
 function DashboardPage() {
@@ -34,8 +38,11 @@ function DashboardPage() {
     loadProjects()
   }, [])
 
-  async function handleCreateProject(event: FormEvent<HTMLFormElement>) {
+  async function handleCreateProject(
+    event: FormEvent<HTMLFormElement>,
+  ) {
     event.preventDefault()
+
     setError('')
     setIsCreating(true)
 
@@ -47,6 +54,7 @@ function DashboardPage() {
       })
 
       setProjects((current) => [...current, project])
+
       setTitle('')
       setDescription('')
       setGenre('')
@@ -62,78 +70,360 @@ function DashboardPage() {
   }
 
   return (
-    <main>
-      <header>
-        <h1>Writing Planner</h1>
-      </header>
+    <div className="dashboard-layout">
+      <aside className="sidebar">
+        <div className="sidebar-brand">
+          <div className="brand-icon">✎</div>
 
-      <section>
-        <h2>New Project</h2>
+          <div>
+            <strong>Writing</strong>
+            <span>Planner</span>
+          </div>
+        </div>
 
-        <form onSubmit={handleCreateProject}>
-          <label>
-            Title
-            <input
-              type="text"
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              required
-            />
-          </label>
+        <nav className="sidebar-nav">
+          <Link
+            to="/"
+            className="sidebar-link sidebar-link-active"
+          >
+            <span>⌂</span>
+            Home
+          </Link>
 
-          <label>
-            Description
-            <textarea
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-            />
-          </label>
+          <Link to="/" className="sidebar-link">
+            <span>◈</span>
+            Projects
+          </Link>
 
-          <label>
-            Genre
-            <input
-              type="text"
-              value={genre}
-              onChange={(event) => setGenre(event.target.value)}
-            />
-          </label>
+          <Link to="/" className="sidebar-link">
+            <span>▤</span>
+            Chapters
+          </Link>
 
-          <button type="submit" disabled={isCreating}>
-            {isCreating ? 'Creating...' : 'Create Project'}
-          </button>
-        </form>
-      </section>
+          <Link to="/" className="sidebar-link">
+            <span>✓</span>
+            Tasks
+          </Link>
 
-      <section>
-        <h2>My Projects</h2>
+          <Link to="/" className="sidebar-link">
+            <span>♙</span>
+            Characters
+          </Link>
 
-        {isLoading && <p>Loading projects...</p>}
+          <Link to="/" className="sidebar-link">
+            <span>▱</span>
+            Notes
+          </Link>
+        </nav>
 
-        {error && <p>{error}</p>}
+        <div className="sidebar-tip">
+          <span className="tip-icon">✦</span>
 
-        {!isLoading && !error && projects.length === 0 && (
-          <p>No projects yet.</p>
-        )}
+          <strong>Writing tip</strong>
 
-        {!isLoading && !error && projects.length > 0 && (
-          <ul>
-            {projects.map((project) => (
-            <li key={project.id}>
-                <Link to={`/projects/${project.id}`}>
-                <h3>{project.title}</h3>
-                </Link>
+          <p>
+            Don't worry about writing
+            perfectly. Just keep going.
+          </p>
+        </div>
+      </aside>
 
-                {project.description && (
-                <p>{project.description}</p>
+      <main className="dashboard-main">
+        <header className="dashboard-header">
+          <div>
+            <p className="eyebrow">
+              ✦ YOUR WRITING SPACE
+            </p>
+
+            <h1>Welcome back!</h1>
+
+            <p>
+              Here's an overview of your
+              writing projects.
+            </p>
+          </div>
+
+          <div className="header-date">
+            <span>◷</span>
+            <div>
+              <strong>
+                {new Date().toLocaleDateString(
+                  'en-US',
+                  {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  },
                 )}
+              </strong>
 
-                {project.genre && <p>{project.genre}</p>}
-            </li>
-            ))}
-          </ul>
+              <small>Keep creating today</small>
+            </div>
+          </div>
+        </header>
+
+        {error && (
+          <div className="dashboard-error">
+            {error}
+          </div>
         )}
-      </section>
-    </main>
+
+        <div className="dashboard-grid">
+          <section className="dashboard-card progress-card">
+            <div className="card-heading">
+              <span className="card-icon">✦</span>
+
+              <div>
+                <h2>Writing Progress</h2>
+                <span>Your creative journey</span>
+              </div>
+            </div>
+
+            <div className="progress-content">
+              <div className="progress-circle">
+                <strong>{projects.length}</strong>
+                <span>projects</span>
+              </div>
+
+              <div className="progress-details">
+                <p>
+                  <strong>
+                    {projects.length}
+                  </strong>{' '}
+                  active projects
+                </p>
+
+                <div className="soft-progress">
+                  <span
+                    style={{
+                      width: projects.length
+                        ? '70%'
+                        : '8%',
+                    }}
+                  />
+                </div>
+
+                <small>
+                  Every story starts with one
+                  sentence.
+                </small>
+              </div>
+            </div>
+          </section>
+
+          <section className="dashboard-card projects-card">
+            <div className="card-heading">
+              <span className="card-icon">◈</span>
+
+              <div>
+                <h2>My Projects</h2>
+                <span>
+                  {projects.length} total
+                </span>
+              </div>
+            </div>
+
+            {isLoading && (
+              <p className="empty-message">
+                Loading projects...
+              </p>
+            )}
+
+            {!isLoading &&
+              projects.length === 0 && (
+                <p className="empty-message">
+                  No projects yet.
+                </p>
+              )}
+
+            {!isLoading &&
+              projects.length > 0 && (
+                <div className="project-mini-list">
+                  {projects
+                    .slice(0, 3)
+                    .map((project) => (
+                      <Link
+                        key={project.id}
+                        to={`/projects/${project.id}`}
+                        className="project-mini"
+                      >
+                        <div className="project-dot">
+                          ✦
+                        </div>
+
+                        <div>
+                          <strong>
+                            {project.title}
+                          </strong>
+
+                          <span>
+                            {project.genre ||
+                              'Writing project'}
+                          </span>
+                        </div>
+
+                        <span className="arrow">
+                          →
+                        </span>
+                      </Link>
+                    ))}
+                </div>
+              )}
+          </section>
+
+          <section className="dashboard-card create-card">
+            <div className="card-heading">
+              <span className="card-icon">+</span>
+
+              <div>
+                <h2>New Project</h2>
+                <span>
+                  Start a new story
+                </span>
+              </div>
+            </div>
+
+            <form onSubmit={handleCreateProject}>
+              <label>
+                Title
+
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(event) =>
+                    setTitle(event.target.value)
+                  }
+                  placeholder="My new story"
+                  required
+                />
+              </label>
+
+              <label>
+                Genre
+
+                <input
+                  type="text"
+                  value={genre}
+                  onChange={(event) =>
+                    setGenre(event.target.value)
+                  }
+                  placeholder="Fantasy, romance..."
+                />
+              </label>
+
+              <label>
+                Description
+
+                <textarea
+                  value={description}
+                  onChange={(event) =>
+                    setDescription(
+                      event.target.value,
+                    )
+                  }
+                  placeholder="What is your story about?"
+                />
+              </label>
+
+              <button
+                type="submit"
+                disabled={isCreating}
+              >
+                {isCreating
+                  ? 'Creating...'
+                  : '✦ Create Project'}
+              </button>
+            </form>
+          </section>
+
+          <section className="dashboard-card overview-card">
+            <div className="card-heading">
+              <span className="card-icon">▦</span>
+
+              <div>
+                <h2>Overview</h2>
+                <span>Your workspace</span>
+              </div>
+            </div>
+
+            <div className="stat-grid">
+              <div className="stat-item">
+                <strong>{projects.length}</strong>
+                <span>Projects</span>
+              </div>
+
+              <div className="stat-item">
+                <strong>✎</strong>
+                <span>Chapters</span>
+              </div>
+
+              <div className="stat-item">
+                <strong>✓</strong>
+                <span>Tasks</span>
+              </div>
+
+              <div className="stat-item">
+                <strong>♙</strong>
+                <span>Characters</span>
+              </div>
+            </div>
+
+            <div className="overview-message">
+              <span>🌿</span>
+
+              <p>
+                Your stories are waiting
+                for you.
+              </p>
+            </div>
+          </section>
+
+          <section className="dashboard-card recent-card">
+            <div className="card-heading">
+              <span className="card-icon">▱</span>
+
+              <div>
+                <h2>Quick Start</h2>
+                <span>
+                  Pick up where you left off
+                </span>
+              </div>
+            </div>
+
+            <div className="quick-actions">
+              {projects.slice(0, 4).map(
+                (project) => (
+                  <Link
+                    key={project.id}
+                    to={`/projects/${project.id}`}
+                    className="quick-project"
+                  >
+                    <span>✦</span>
+
+                    <div>
+                      <strong>
+                        {project.title}
+                      </strong>
+
+                      <small>
+                        Continue writing →
+                      </small>
+                    </div>
+                  </Link>
+                ),
+              )}
+
+              {projects.length === 0 && (
+                <p className="empty-message">
+                  Create your first project
+                  to get started.
+                </p>
+              )}
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
   )
 }
 
