@@ -17,10 +17,22 @@ import {
 
 import { getProjectStatistics } from '../api/statistics'
 
+import {
+  createCharacter,
+  getCharacters,
+} from '../api/characters'
+
+import {
+  createNote,
+  getNotes,
+} from '../api/notes'
+
 import type { Project } from '../types/project'
 import type { Chapter } from '../types/chapter'
 import type { Task } from '../types/task'
 import type { ProjectStatistics } from '../types/statistics'
+import type { Character } from '../types/character'
+import type { Note } from '../types/note'
 
 function ProjectPage() {
   const { projectId } = useParams()
@@ -31,6 +43,9 @@ function ProjectPage() {
   const [statistics, setStatistics] =
     useState<ProjectStatistics | null>(null)
 
+  const [characters, setCharacters] = useState<Character[]>([])
+  const [notes, setNotes] = useState<Note[]>([])
+
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [isCreating, setIsCreating] = useState(false)
@@ -38,6 +53,18 @@ function ProjectPage() {
   const [taskTitle, setTaskTitle] = useState('')
   const [taskChapterId, setTaskChapterId] = useState('')
   const [isCreatingTask, setIsCreatingTask] = useState(false)
+
+  const [characterName, setCharacterName] = useState('')
+  const [characterDescription, setCharacterDescription] =
+    useState('')
+  const [characterRole, setCharacterRole] = useState('')
+  const [isCreatingCharacter, setIsCreatingCharacter] =
+    useState(false)
+
+  const [noteTitle, setNoteTitle] = useState('')
+  const [noteContent, setNoteContent] = useState('')
+  const [isCreatingNote, setIsCreatingNote] =
+    useState(false)
 
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
@@ -56,17 +83,23 @@ function ProjectPage() {
           chaptersData,
           tasksData,
           statisticsData,
+          charactersData,
+          notesData,
         ] = await Promise.all([
           getProject(id),
           getChapters(id),
           getTasks(id),
           getProjectStatistics(id),
+          getCharacters(id),
+          getNotes(id),
         ])
 
         setProject(projectData)
         setChapters(chaptersData)
         setTasks(tasksData)
         setStatistics(statisticsData)
+        setCharacters(charactersData)
+        setNotes(notesData)
       } catch (error) {
         setError(
           error instanceof Error
@@ -183,6 +216,84 @@ function ProjectPage() {
     }
   }
 
+  async function handleCreateCharacter(
+    event: FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault()
+
+    if (!projectId) {
+      return
+    }
+
+    setError('')
+    setIsCreatingCharacter(true)
+
+    try {
+      const character = await createCharacter(
+        Number(projectId),
+        {
+          name: characterName,
+          description:
+            characterDescription || undefined,
+          role: characterRole || undefined,
+        },
+      )
+
+      setCharacters((current) => [
+        ...current,
+        character,
+      ])
+
+      setCharacterName('')
+      setCharacterDescription('')
+      setCharacterRole('')
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Failed to create character',
+      )
+    } finally {
+      setIsCreatingCharacter(false)
+    }
+  }
+
+  async function handleCreateNote(
+    event: FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault()
+
+    if (!projectId) {
+      return
+    }
+
+    setError('')
+    setIsCreatingNote(true)
+
+    try {
+      const note = await createNote(
+        Number(projectId),
+        {
+          title: noteTitle,
+          content: noteContent,
+        },
+      )
+
+      setNotes((current) => [...current, note])
+
+      setNoteTitle('')
+      setNoteContent('')
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Failed to create note',
+      )
+    } finally {
+      setIsCreatingNote(false)
+    }
+  }
+
   if (isLoading) {
     return <p>Loading project...</p>
   }
@@ -205,7 +316,9 @@ function ProjectPage() {
         <p>{project.description}</p>
       )}
 
-      {project.genre && <p>{project.genre}</p>}
+      {project.genre && (
+        <p>{project.genre}</p>
+      )}
 
       {error && <p>{error}</p>}
 
@@ -296,7 +409,9 @@ function ProjectPage() {
                   <h3>{chapter.title}</h3>
                 </Link>
 
-                <p>{chapter.word_count} words</p>
+                <p>
+                  {chapter.word_count} words
+                </p>
               </li>
             ))}
           </ol>
@@ -327,7 +442,9 @@ function ProjectPage() {
                 setTaskChapterId(event.target.value)
               }
             >
-              <option value="">No chapter</option>
+              <option value="">
+                No chapter
+              </option>
 
               {chapters.map((chapter) => (
                 <option
@@ -369,6 +486,132 @@ function ProjectPage() {
 
                   {task.title}
                 </label>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section>
+        <h2>Characters</h2>
+
+        <form onSubmit={handleCreateCharacter}>
+          <label>
+            Name
+            <input
+              type="text"
+              value={characterName}
+              onChange={(event) =>
+                setCharacterName(event.target.value)
+              }
+              required
+            />
+          </label>
+
+          <label>
+            Role
+            <input
+              type="text"
+              value={characterRole}
+              onChange={(event) =>
+                setCharacterRole(event.target.value)
+              }
+            />
+          </label>
+
+          <label>
+            Description
+            <textarea
+              value={characterDescription}
+              onChange={(event) =>
+                setCharacterDescription(
+                  event.target.value,
+                )
+              }
+            />
+          </label>
+
+          <button
+            type="submit"
+            disabled={isCreatingCharacter}
+          >
+            {isCreatingCharacter
+              ? 'Creating...'
+              : 'Add Character'}
+          </button>
+        </form>
+
+        {characters.length === 0 && (
+          <p>No characters yet.</p>
+        )}
+
+        {characters.length > 0 && (
+          <ul>
+            {characters.map((character) => (
+              <li key={character.id}>
+                <h3>{character.name}</h3>
+
+                {character.role && (
+                  <p>{character.role}</p>
+                )}
+
+                {character.description && (
+                  <p>{character.description}</p>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section>
+        <h2>Notes</h2>
+
+        <form onSubmit={handleCreateNote}>
+          <label>
+            Title
+            <input
+              type="text"
+              value={noteTitle}
+              onChange={(event) =>
+                setNoteTitle(event.target.value)
+              }
+              required
+            />
+          </label>
+
+          <label>
+            Content
+            <textarea
+              value={noteContent}
+              onChange={(event) =>
+                setNoteContent(event.target.value)
+              }
+              rows={8}
+              required
+            />
+          </label>
+
+          <button
+            type="submit"
+            disabled={isCreatingNote}
+          >
+            {isCreatingNote
+              ? 'Creating...'
+              : 'Add Note'}
+          </button>
+        </form>
+
+        {notes.length === 0 && (
+          <p>No notes yet.</p>
+        )}
+
+        {notes.length > 0 && (
+          <ul>
+            {notes.map((note) => (
+              <li key={note.id}>
+                <h3>{note.title}</h3>
+                <p>{note.content}</p>
               </li>
             ))}
           </ul>
