@@ -7,8 +7,22 @@
     "Segoe UI",
     sans-serif;
 
-  color: #4b4c3e;
-  background: #e9e4d3;
+  /* Main palette */
+  --bg: #e9e4d3;
+  --card: #f7f1df;
+  --card-light: #fcf8eb;
+
+  --green-dark: #344d39;
+  --green: #586d55;
+  --green-action: #687b59;
+  --green-soft: #e9eadb;
+
+  --text: #4b4c3e;
+  --text-muted: #7b7b6b;
+  --border: #ddd4bb;
+
+  color: var(--text);
+  background: var(--bg);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -21,7 +35,7 @@
 body {
   margin: 0;
   min-width: 320px;
-  background: #e9e4d3;
+  background: var(--bg);
 }
 
 button,
@@ -757,4 +771,38 @@ button {
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.logout-button {
+  width: 100%;
+  margin-top: 14px;
+  padding: 10px 13px;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  background: transparent;
+  color: #dce2cf;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+
+  font-size: 13px;
+  text-align: left;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.logout-button span {
+  width: 20px;
+  text-align: center;
+  font-size: 17px;
+}
+
+.logout-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
 }

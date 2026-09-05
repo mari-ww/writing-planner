@@ -11,6 +11,7 @@ from app.routers.users import router as users_router
 from app.routers.statistics import (
     router as statistics_router,
 )
+from app.routers.daily_writing import router as daily_writing_router
 
 app = FastAPI(
     title="Writing Planner API",
@@ -35,6 +36,7 @@ app.include_router(characters_router)
 app.include_router(notes_router)
 app.include_router(tasks_router)
 app.include_router(statistics_router)
+app.include_router(daily_writing_router)
 
 @app.get("/health")
 def health_check():

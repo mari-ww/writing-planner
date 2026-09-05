@@ -1,0 +1,337 @@
+/* =========================================
+   CHAPTER PAGE
+   ========================================= */
+
+.chapter-page {
+  min-height: 100vh;
+  padding: 24px 30px 60px;
+  background: #e9e4d3;
+}
+
+/* =========================================
+   TOP BAR
+   ========================================= */
+
+.chapter-topbar {
+  max-width: 920px;
+  margin: 0 auto 22px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+}
+
+.chapter-back {
+  justify-self: start;
+  color: #718264;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.chapter-back:hover {
+  color: #4f6248;
+  text-decoration: none;
+}
+
+.chapter-topbar-center {
+  text-align: center;
+}
+
+.chapter-topbar-center span,
+.chapter-topbar-center small {
+  display: block;
+}
+
+.chapter-topbar-center span {
+  color: #53634b;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.chapter-topbar-center small {
+  margin-top: 3px;
+  color: #9a9989;
+  font-size: 0.62rem;
+}
+
+.chapter-topbar-right {
+  justify-self: end;
+  min-width: 70px;
+}
+
+.saved-indicator {
+  color: #718264;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* =========================================
+   PAPER
+   ========================================= */
+
+.chapter-sheet {
+  max-width: 920px;
+  min-height: calc(100vh - 130px);
+  margin: 0 auto;
+
+  background: var(--card);
+
+  border: 1px solid var(--border);
+  border-radius: 5px;
+
+  box-shadow:
+    0 12px 30px rgba(75, 72, 55, 0.08),
+    0 2px 5px rgba(75, 72, 55, 0.04);
+}
+
+.chapter-sheet-inner {
+  min-height: calc(100vh - 130px);
+  padding: 54px 76px 42px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 39px,
+      rgba(126, 143, 108, 0.07) 40px
+    );
+
+  background-size: 100% 40px;
+
+  border-left: 1px solid rgba(179, 110, 91, 0.1);
+  border-right: 1px solid rgba(179, 110, 91, 0.1);
+}
+
+/* =========================================
+   HEADING
+   ========================================= */
+
+.chapter-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.chapter-label {
+  color: #879575;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.chapter-date {
+  color: #aaa696;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.72rem;
+  font-style: italic;
+}
+
+/* =========================================
+   TITLE
+   ========================================= */
+
+.chapter-title {
+  width: 100%;
+  padding: 0;
+
+  color: #4d5548;
+  background: transparent;
+
+  border: 0;
+  outline: none;
+
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.chapter-title::placeholder {
+  color: #bbb6a7;
+}
+
+.chapter-divider {
+  width: 55px;
+  height: 2px;
+  margin: 18px 0;
+
+  background: #a5b296;
+}
+
+/* =========================================
+   EDITOR
+   ========================================= */
+
+.chapter-editor {
+  display: block;
+  width: 100%;
+  min-height: 55vh;
+  padding: 0;
+
+  resize: vertical;
+
+  color: #55584b;
+  background: transparent;
+
+  border: 0;
+  outline: none;
+
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.02rem;
+  line-height: 2.5;
+
+  caret-color: var(--green-action);
+}
+
+.chapter-editor::placeholder {
+  color: #bdb9ab;
+  font-style: italic;
+}
+
+.chapter-editor:focus {
+  outline: none;
+}
+
+/* =========================================
+   FOOTER
+   ========================================= */
+
+.chapter-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+  padding-top: 22px;
+
+  border-top: 1px solid rgba(132, 147, 110, 0.14);
+}
+
+.chapter-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #999887;
+  font-size: 0.68rem;
+}
+
+.meta-dot {
+  color: #c2bba8;
+}
+
+.chapter-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.chapter-error {
+  color: #9b6656;
+  font-size: 0.68rem;
+}
+
+.save-chapter-button {
+  padding: 10px 18px;
+
+  color: var(--card);
+  background: var(--green-action);
+
+  border: 0;
+  border-radius: 9px;
+
+  font-size: 0.72rem;
+  font-weight: 700;
+
+  box-shadow:
+    0 3px 7px rgba(75, 72, 55, 0.1);
+
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.save-chapter-button:hover:not(:disabled) {
+  background: #566a49;
+  transform: translateY(-1px);
+}
+
+.save-chapter-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+/* =========================================
+   STATES
+   ========================================= */
+
+.chapter-page-state {
+  min-height: 100vh;
+
+  display: grid;
+  place-items: center;
+
+  background: #e9e4d3;
+  color: #777866;
+
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 700px) {
+  .chapter-page {
+    padding: 16px 12px 30px;
+  }
+
+  .chapter-topbar {
+    grid-template-columns: 1fr auto;
+  }
+
+  .chapter-topbar-center {
+    display: none;
+  }
+
+  .chapter-sheet,
+  .chapter-sheet-inner {
+    min-height: calc(100vh - 100px);
+  }
+
+  .chapter-sheet-inner {
+    padding: 38px 28px 30px;
+  }
+
+  .chapter-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .chapter-title {
+    font-size: 1.55rem;
+  }
+
+  .chapter-editor {
+    min-height: 55vh;
+    font-size: 0.95rem;
+    line-height: 2.25;
+  }
+
+  .chapter-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .chapter-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .save-chapter-button {
+    margin-left: auto;
+  }
+}

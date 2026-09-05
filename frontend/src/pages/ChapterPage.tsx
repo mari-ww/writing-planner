@@ -9,6 +9,8 @@ import {
 
 import type { Chapter } from '../types/chapter'
 
+import '../styles/chapter.css'
+
 function ChapterPage() {
   const { projectId, chapterId } = useParams()
 
@@ -89,60 +91,127 @@ function ChapterPage() {
     }
   }
 
+  const wordCount = content
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length
+
   if (isLoading) {
-    return <p>Loading chapter...</p>
+    return (
+      <main className="chapter-page-state">
+        <p>Opening your chapter...</p>
+      </main>
+    )
   }
 
   if (error && !chapter) {
-    return <p>{error}</p>
+    return (
+      <main className="chapter-page-state">
+        <p>{error}</p>
+      </main>
+    )
   }
 
   if (!chapter) {
-    return <p>Chapter not found.</p>
+    return (
+      <main className="chapter-page-state">
+        <p>Chapter not found.</p>
+      </main>
+    )
   }
 
   return (
-    <main>
-      <Link to={`/projects/${projectId}`}>
-        ← Back to project
-      </Link>
+    <main className="chapter-page">
+      <header className="chapter-topbar">
+        <Link
+          to={`/projects/${projectId}`}
+          className="chapter-back"
+        >
+          ← Back to story
+        </Link>
 
-      <h1>Chapter {chapter.position}</h1>
+        <div className="chapter-topbar-center">
+          <span>Writing Journal</span>
+          <small>Chapter {chapter.position}</small>
+        </div>
 
-      <form onSubmit={handleSave}>
-        <label>
-          Title
-          <input
-            type="text"
-            value={title}
-            onChange={(event) =>
-              setTitle(event.target.value)
-            }
-            required
-          />
-        </label>
+        <div className="chapter-topbar-right">
+          {saved && (
+            <span className="saved-indicator">
+              ✓ Saved
+            </span>
+          )}
+        </div>
+      </header>
 
-        <label>
-          Content
-          <textarea
-            value={content}
-            onChange={(event) =>
-              setContent(event.target.value)
-            }
-            rows={20}
-          />
-        </label>
+      <section className="chapter-sheet">
+        <div className="chapter-sheet-inner">
+          <div className="chapter-heading">
+            <span className="chapter-label">
+              Chapter {String(chapter.position).padStart(2, '0')}
+            </span>
 
-        <p>{chapter.word_count} words</p>
+            <span className="chapter-date">
+              Your story, your words.
+            </span>
+          </div>
 
-        {error && <p>{error}</p>}
+          <form onSubmit={handleSave}>
+            <input
+              className="chapter-title"
+              type="text"
+              value={title}
+              onChange={(event) =>
+                setTitle(event.target.value)
+              }
+              placeholder="Chapter title..."
+              required
+            />
 
-        {saved && <p>Chapter saved.</p>}
+            <div className="chapter-divider" />
 
-        <button type="submit" disabled={isSaving}>
-          {isSaving ? 'Saving...' : 'Save Chapter'}
-        </button>
-      </form>
+            <textarea
+              className="chapter-editor"
+              value={content}
+              onChange={(event) => {
+                setContent(event.target.value)
+                setSaved(false)
+              }}
+              placeholder="Let the story begin..."
+            />
+
+            <footer className="chapter-footer">
+              <div className="chapter-meta">
+                <span>{wordCount} words</span>
+
+                <span className="meta-dot">·</span>
+
+                <span>
+                  Chapter {chapter.position}
+                </span>
+              </div>
+
+              <div className="chapter-actions">
+                {error && (
+                  <span className="chapter-error">
+                    {error}
+                  </span>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="save-chapter-button"
+                >
+                  {isSaving
+                    ? 'Saving...'
+                    : 'Save Chapter'}
+                </button>
+              </div>
+            </footer>
+          </form>
+        </div>
+      </section>
     </main>
   )
 }

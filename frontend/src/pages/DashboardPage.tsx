@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 import {
   createProject,
@@ -10,6 +10,12 @@ import {
 import type { Project } from '../types/project'
 
 function DashboardPage() {
+
+    function handleLogout() {
+    localStorage.removeItem('access_token')
+    window.location.reload()
+    }
+
   const [projects, setProjects] = useState<Project[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
@@ -18,6 +24,8 @@ function DashboardPage() {
   const [description, setDescription] = useState('')
   const [genre, setGenre] = useState('')
   const [isCreating, setIsCreating] = useState(false)
+
+  const location = useLocation()
 
   useEffect(() => {
     async function loadProjects() {
@@ -69,6 +77,15 @@ function DashboardPage() {
     }
   }
 
+  const navigationItems = [
+    { label: 'Home', icon: '⌂', to: '/' },
+    { label: 'Projects', icon: '◈', to: '/' },
+    { label: 'Chapters', icon: '▤' },
+    { label: 'Tasks', icon: '✓' },
+    { label: 'Characters', icon: '♙' },
+    { label: 'Notes', icon: '▱' },
+  ]
+
   return (
     <div className="dashboard-layout">
       <aside className="sidebar">
@@ -82,38 +99,37 @@ function DashboardPage() {
         </div>
 
         <nav className="sidebar-nav">
-          <Link
-            to="/"
-            className="sidebar-link sidebar-link-active"
-          >
-            <span>⌂</span>
-            Home
-          </Link>
+          {navigationItems.map((item) => {
+            const isDisabled = !item.to
 
-          <Link to="/" className="sidebar-link">
-            <span>◈</span>
-            Projects
-          </Link>
+            if (isDisabled) {
+              return (
+                <span
+                  key={item.label}
+                  className="sidebar-link sidebar-link-disabled"
+                  aria-disabled="true"
+                >
+                  <span>{item.icon}</span>
+                  {item.label}
+                </span>
+              )
+            }
 
-          <Link to="/" className="sidebar-link">
-            <span>▤</span>
-            Chapters
-          </Link>
-
-          <Link to="/" className="sidebar-link">
-            <span>✓</span>
-            Tasks
-          </Link>
-
-          <Link to="/" className="sidebar-link">
-            <span>♙</span>
-            Characters
-          </Link>
-
-          <Link to="/" className="sidebar-link">
-            <span>▱</span>
-            Notes
-          </Link>
+            return (
+              <Link
+                key={item.label}
+                to={item.to}
+                className={`sidebar-link ${
+                  location.pathname === item.to
+                    ? 'sidebar-link-active'
+                    : ''
+                }`}
+              >
+                <span>{item.icon}</span>
+                {item.label}
+              </Link>
+            )
+          })}
         </nav>
 
         <div className="sidebar-tip">
@@ -126,6 +142,15 @@ function DashboardPage() {
             perfectly. Just keep going.
           </p>
         </div>
+
+        <button
+            type="button"
+            className="logout-button"
+            onClick={handleLogout}
+            >
+            <span>⇥</span>
+            Logout
+            </button>
       </aside>
 
       <main className="dashboard-main">
@@ -145,6 +170,7 @@ function DashboardPage() {
 
           <div className="header-date">
             <span>◷</span>
+
             <div>
               <strong>
                 {new Date().toLocaleDateString(
