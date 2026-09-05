@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import AuthPage from './pages/AuthPage'
 import DashboardPage from './pages/DashboardPage'
+import ProjectPage from './pages/ProjectPage'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -11,14 +13,19 @@ function App() {
   if (!isAuthenticated) {
     return (
       <AuthPage
-        onAuthenticated={() =>
-          setIsAuthenticated(true)
-        }
+        onAuthenticated={() => setIsAuthenticated(true)}
       />
     )
   }
 
-  return <DashboardPage />
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<DashboardPage />} />
+        <Route path="/projects/:projectId" element={<ProjectPage />} />
+      </Routes>
+    </BrowserRouter>
+  )
 }
 
 export default App

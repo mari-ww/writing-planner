@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 
 import { createProject, getProjects } from '../api/projects'
 import type { Project } from '../types/project'
@@ -117,15 +118,17 @@ function DashboardPage() {
         {!isLoading && !error && projects.length > 0 && (
           <ul>
             {projects.map((project) => (
-              <li key={project.id}>
+            <li key={project.id}>
+                <Link to={`/projects/${project.id}`}>
                 <h3>{project.title}</h3>
+                </Link>
 
                 {project.description && (
-                  <p>{project.description}</p>
+                <p>{project.description}</p>
                 )}
 
                 {project.genre && <p>{project.genre}</p>}
-              </li>
+            </li>
             ))}
           </ul>
         )}

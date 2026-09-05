@@ -15,3 +15,7 @@ export function createProject(data: {
     body: JSON.stringify(data),
   })
 }
+
+export function getProject(projectId: number): Promise<Project> {
+  return apiRequest<Project>(`/projects/${projectId}`)
+}
