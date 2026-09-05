@@ -6,3 +6,19 @@ export function getChapters(projectId: number): Promise<Chapter[]> {
     `/projects/${projectId}/chapters`,
   )
 }
+
+export function createChapter(
+  projectId: number,
+  data: {
+    title: string
+    content?: string
+  },
+): Promise<Chapter> {
+  return apiRequest<Chapter>(
+    `/projects/${projectId}/chapters`,
+    {
+      method: 'POST',
+      body: JSON.stringify(data),
+    },
+  )
+}
