@@ -102,6 +102,35 @@ def get_chapter(
 
     return chapter_service.to_response(chapter)
 
+@router.patch(
+    "/{chapter_id}",
+    response_model=ChapterResponse,
+)
+def update_chapter(
+    project_id: int,
+    chapter_id: int,
+    data: ChapterUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    project = get_project_for_current_user(
+        project_id,
+        db,
+        current_user,
+    )
+
+    chapter = chapter_service.get_owned_chapter(
+        db,
+        chapter_id,
+        project,
+    )
+
+    return chapter_service.update(
+        db,
+        chapter,
+        data,
+    )
+
 @router.delete(
     "/{chapter_id}",
     status_code=status.HTTP_204_NO_CONTENT,

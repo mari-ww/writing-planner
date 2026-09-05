@@ -4,6 +4,7 @@ from app.models.note import Note
 from app.models.project import Project
 from app.models.user import User
 from app.models.task import Task
+from app.models.daily_writing_stat import DailyWritingStat
 
 __all__ = [
     "Chapter",

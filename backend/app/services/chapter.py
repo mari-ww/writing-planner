@@ -6,20 +6,22 @@ from app.models.project import Project
 from app.repositories.chapter import ChapterRepository
 from app.schemas.chapter import (
     ChapterCreate,
+    ChapterResponse,
     ChapterUpdate,
 )
+from app.services.daily_writing import DailyWritingService
 from app.services.writing import count_words
-from app.schemas.chapter import (
-        ChapterCreate,
-        ChapterResponse,
-        ChapterUpdate,
-    )
+
 
 class ChapterService:
     def __init__(self):
         self.repository = ChapterRepository()
+        self.daily_writing_service = DailyWritingService()
 
-    def to_response(self, chapter: Chapter) -> ChapterResponse:
+    def to_response(
+        self,
+        chapter: Chapter,
+    ) -> ChapterResponse:
         return ChapterResponse(
             id=chapter.id,
             title=chapter.title,
@@ -97,6 +99,10 @@ class ChapterService:
         chapter: Chapter,
         data: ChapterUpdate,
     ) -> ChapterResponse:
+        old_word_count = count_words(
+            chapter.content
+        )
+
         update_data = data.model_dump(
             exclude_unset=True
         )
@@ -104,8 +110,20 @@ class ChapterService:
         for field, value in update_data.items():
             setattr(chapter, field, value)
 
+        new_word_count = count_words(
+            chapter.content
+        )
+
+        words_added = new_word_count - old_word_count
+
         db.commit()
         db.refresh(chapter)
+
+        self.daily_writing_service.record_words(
+            db,
+            chapter.project_id,
+            words_added,
+        )
 
         return self.to_response(chapter)
 
