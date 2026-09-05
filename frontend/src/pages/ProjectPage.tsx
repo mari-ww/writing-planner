@@ -158,7 +158,11 @@ function ProjectPage() {
           <ol>
             {chapters.map((chapter) => (
               <li key={chapter.id}>
-                <h3>{chapter.title}</h3>
+                <Link
+                    to={`/projects/${projectId}/chapters/${chapter.id}`}
+                >
+                    <h3>{chapter.title}</h3>
+                </Link>
                 <p>{chapter.word_count} words</p>
               </li>
             ))}
