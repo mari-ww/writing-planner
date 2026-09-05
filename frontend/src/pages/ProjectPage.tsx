@@ -7,19 +7,30 @@ import {
   createChapter,
   getChapters,
 } from '../api/chapters'
+import {
+  createTask,
+  getTasks,
+  updateTask,
+} from '../api/tasks'
 
 import type { Project } from '../types/project'
 import type { Chapter } from '../types/chapter'
+import type { Task } from '../types/task'
 
 function ProjectPage() {
   const { projectId } = useParams()
 
   const [project, setProject] = useState<Project | null>(null)
   const [chapters, setChapters] = useState<Chapter[]>([])
+  const [tasks, setTasks] = useState<Task[]>([])
 
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [isCreating, setIsCreating] = useState(false)
+
+  const [taskTitle, setTaskTitle] = useState('')
+  const [taskChapterId, setTaskChapterId] = useState('')
+  const [isCreatingTask, setIsCreatingTask] = useState(false)
 
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
@@ -33,14 +44,19 @@ function ProjectPage() {
       try {
         const id = Number(projectId)
 
-        const [projectData, chaptersData] =
-          await Promise.all([
-            getProject(id),
-            getChapters(id),
-          ])
+        const [
+          projectData,
+          chaptersData,
+          tasksData,
+        ] = await Promise.all([
+          getProject(id),
+          getChapters(id),
+          getTasks(id),
+        ])
 
         setProject(projectData)
         setChapters(chaptersData)
+        setTasks(tasksData)
       } catch (error) {
         setError(
           error instanceof Error
@@ -90,11 +106,78 @@ function ProjectPage() {
     }
   }
 
+  async function handleCreateTask(
+    event: FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault()
+
+    if (!projectId) {
+      return
+    }
+
+    setError('')
+    setIsCreatingTask(true)
+
+    try {
+      const task = await createTask(
+        Number(projectId),
+        {
+          title: taskTitle,
+          chapter_id: taskChapterId
+            ? Number(taskChapterId)
+            : undefined,
+        },
+      )
+
+      setTasks((current) => [...current, task])
+      setTaskTitle('')
+      setTaskChapterId('')
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Failed to create task',
+      )
+    } finally {
+      setIsCreatingTask(false)
+    }
+  }
+
+  async function handleToggleTask(task: Task) {
+    if (!projectId) {
+      return
+    }
+
+    try {
+      const updatedTask = await updateTask(
+        Number(projectId),
+        task.id,
+        {
+          completed: !task.completed,
+        },
+      )
+
+      setTasks((current) =>
+        current.map((item) =>
+          item.id === updatedTask.id
+            ? updatedTask
+            : item,
+        ),
+      )
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Failed to update task',
+      )
+    }
+  }
+
   if (isLoading) {
     return <p>Loading project...</p>
   }
 
-  if (error) {
+  if (error && !project) {
     return <p>{error}</p>
   }
 
@@ -113,6 +196,8 @@ function ProjectPage() {
       )}
 
       {project.genre && <p>{project.genre}</p>}
+
+      {error && <p>{error}</p>}
 
       <section>
         <h2>Chapters</h2>
@@ -159,14 +244,87 @@ function ProjectPage() {
             {chapters.map((chapter) => (
               <li key={chapter.id}>
                 <Link
-                    to={`/projects/${projectId}/chapters/${chapter.id}`}
+                  to={`/projects/${projectId}/chapters/${chapter.id}`}
                 >
-                    <h3>{chapter.title}</h3>
+                  <h3>{chapter.title}</h3>
                 </Link>
+
                 <p>{chapter.word_count} words</p>
               </li>
             ))}
           </ol>
+        )}
+      </section>
+
+      <section>
+        <h2>Tasks</h2>
+
+        <form onSubmit={handleCreateTask}>
+          <label>
+            Task
+            <input
+              type="text"
+              value={taskTitle}
+              onChange={(event) =>
+                setTaskTitle(event.target.value)
+              }
+              required
+            />
+          </label>
+
+          <label>
+            Chapter
+            <select
+              value={taskChapterId}
+              onChange={(event) =>
+                setTaskChapterId(event.target.value)
+              }
+            >
+              <option value="">No chapter</option>
+
+              {chapters.map((chapter) => (
+                <option
+                  key={chapter.id}
+                  value={chapter.id}
+                >
+                  {chapter.position}. {chapter.title}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <button
+            type="submit"
+            disabled={isCreatingTask}
+          >
+            {isCreatingTask
+              ? 'Creating...'
+              : 'Add Task'}
+          </button>
+        </form>
+
+        {tasks.length === 0 && (
+          <p>No tasks yet.</p>
+        )}
+
+        {tasks.length > 0 && (
+          <ul>
+            {tasks.map((task) => (
+              <li key={task.id}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={task.completed}
+                    onChange={() =>
+                      handleToggleTask(task)
+                    }
+                  />
+
+                  {task.title}
+                </label>
+              </li>
+            ))}
+          </ul>
         )}
       </section>
     </main>
