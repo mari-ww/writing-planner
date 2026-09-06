@@ -45,6 +45,13 @@
   font-size: 2.2rem;
 }
 
+.project-header-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
 .project-description {
   max-width: 650px;
   margin: 0.6rem 0;
@@ -510,4 +517,26 @@
   .chapter-diary {
     align-items: flex-start;
   }
+}
+
+.delete-project-button {
+  border: 1px solid #d6c9b8;
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: transparent;
+  color: #8b6f61;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delete-project-button:hover:not(:disabled) {
+  border-color: #b97868;
+  background: #f5e9e3;
+  color: #9b4f43;
+}
+
+.delete-project-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

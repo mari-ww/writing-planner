@@ -5,6 +5,7 @@ import { Link, useParams } from 'react-router-dom'
 import {
   getChapter,
   updateChapter,
+  deleteChapter,
 } from '../api/chapters'
 
 import {
@@ -35,6 +36,9 @@ function ChapterPage() {
     useState(true)
 
   const [isSaving, setIsSaving] =
+    useState(false)
+
+  const [isDeleting, setIsDeleting] =
     useState(false)
 
   const [isCreatingNote, setIsCreatingNote] =
@@ -113,6 +117,40 @@ function ChapterPage() {
       )
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  async function handleDeleteChapter() {
+    if (!projectId || !chapterId) {
+      return
+    }
+
+    const confirmed = window.confirm(
+      'Delete this chapter? This action cannot be undone.',
+    )
+
+    if (!confirmed) {
+      return
+    }
+
+    setError('')
+    setIsDeleting(true)
+
+    try {
+      await deleteChapter(
+        Number(projectId),
+        Number(chapterId),
+      )
+
+      window.location.href = `/projects/${projectId}`
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Failed to delete chapter',
+      )
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -270,6 +308,14 @@ function ChapterPage() {
                   {isSaving
                     ? 'Saving...'
                     : 'Save'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDeleteChapter}
+                  disabled={isDeleting || isSaving}
+                  className="delete-chapter-button"
+                >
+                  {isDeleting ? 'Deleting...' : 'Delete'}
                 </button>
               </div>
             </footer>

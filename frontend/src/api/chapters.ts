@@ -50,3 +50,15 @@ export function updateChapter(
     },
   )
 }
+
+export function deleteChapter(
+  projectId: number,
+  chapterId: number,
+): Promise<void> {
+  return apiRequest<void>(
+    `/projects/${projectId}/chapters/${chapterId}`,
+    {
+      method: 'DELETE',
+    },
+  )
+}

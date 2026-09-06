@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
-import { getProject } from '../api/projects'
+import {
+  getProject,
+  deleteProject,
+} from '../api/projects'
 
 import {
   createChapter,
@@ -64,6 +67,9 @@ function ProjectPage() {
 
   const [isLoading, setIsLoading] =
     useState(true)
+
+  const [isDeleting, setIsDeleting] =
+    useState(false)
 
   const [error, setError] = useState('')
 
@@ -259,6 +265,37 @@ function ProjectPage() {
     }
   }
 
+  async function handleDeleteProject() {
+    if (!projectId) {
+      return
+    }
+
+    const confirmed = window.confirm(
+      `Delete "${project?.title}"? This will permanently delete the project and all of its content.`,
+    )
+
+    if (!confirmed) {
+      return
+    }
+
+    setError('')
+    setIsDeleting(true)
+
+    try {
+      await deleteProject(Number(projectId))
+
+      window.location.href = '/projects'
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Failed to delete project',
+      )
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
   if (isLoading) {
     return (
       <main className="project-page">
@@ -324,11 +361,25 @@ function ProjectPage() {
             )}
           </div>
 
-          <div className="project-overview">
-            <strong>
-              {chapters.length}
-            </strong>
-            <span>chapters</span>
+          <div className="project-header-actions">
+            <div className="project-overview">
+              <strong>
+                {chapters.length}
+              </strong>
+
+              <span>chapters</span>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleDeleteProject}
+              disabled={isDeleting}
+              className="delete-project-button"
+            >
+              {isDeleting
+                ? 'Deleting...'
+                : 'Delete project'}
+            </button>
           </div>
         </div>
       </header>

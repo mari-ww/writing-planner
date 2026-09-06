@@ -19,3 +19,9 @@ export function createProject(data: {
 export function getProject(projectId: number): Promise<Project> {
   return apiRequest<Project>(`/projects/${projectId}`)
 }
+
+export function deleteProject(projectId: number): Promise<void> {
+  return apiRequest<void>(`/projects/${projectId}`, {
+    method: 'DELETE',
+  })
+}

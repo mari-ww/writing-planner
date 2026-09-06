@@ -133,7 +133,13 @@ function DashboardPage() {
   ]
 
   const today = new Date()
+
+  /*
+   * WRITING GRAPH
+   */
+
   const graphStart = new Date(today)
+
   graphStart.setDate(
     today.getDate() - 364,
   )
@@ -156,6 +162,7 @@ function DashboardPage() {
     { length: 365 },
     (_, index) => {
       const date = new Date(graphStart)
+
       date.setDate(
         graphStart.getDate() + index,
       )
@@ -191,6 +198,72 @@ function DashboardPage() {
         wordsWritten,
         level,
       }
+    },
+  )
+
+  /*
+   * OVERVIEW STATS
+   *
+   * Daily average:
+   * average of the last 30 calendar days,
+   * including days with zero writing.
+   */
+
+  const last30Days = Array.from(
+    { length: 30 },
+    (_, index) => {
+      const date = new Date(today)
+
+      date.setDate(
+        today.getDate() - (29 - index),
+      )
+
+      const dateKey = date
+        .toISOString()
+        .split('T')[0]
+
+      return {
+        date: dateKey,
+        wordsWritten:
+          writingMap.get(dateKey) ?? 0,
+      }
+    },
+  )
+
+  const monthlyWords = writingHistory
+    .filter((day) => {
+      const date = new Date(
+        `${day.date}T00:00:00`,
+      )
+
+      return (
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() ===
+          today.getFullYear()
+      )
+    })
+    .reduce(
+      (total, day) =>
+        total + day.words_written,
+      0,
+    )
+
+  const dailyAverage = Math.round(
+    last30Days.reduce(
+      (total, day) =>
+        total + day.wordsWritten,
+      0,
+    ) / 30,
+  )
+
+  const bestDay = last30Days.reduce(
+    (best, day) =>
+      day.wordsWritten > best.wordsWritten
+        ? day
+        : best,
+    {
+      date: '',
+      wordsWritten: 0,
     },
   )
 
@@ -290,7 +363,9 @@ function DashboardPage() {
                 )}
               </strong>
 
-              <small>Keep creating today</small>
+              <small>
+                Keep creating today
+              </small>
             </div>
           </div>
         </header>
@@ -311,7 +386,9 @@ function DashboardPage() {
 
               <div>
                 <h2>Writing Stats</h2>
-                <span>Your writing activity</span>
+                <span>
+                  Your writing activity
+                </span>
               </div>
             </div>
 
@@ -358,7 +435,9 @@ function DashboardPage() {
 
               <div>
                 <h2>Writing Progress</h2>
-                <span>Your projects at a glance</span>
+                <span>
+                  Your projects at a glance
+                </span>
               </div>
             </div>
 
@@ -371,8 +450,8 @@ function DashboardPage() {
             {!isLoading &&
               projects.length === 0 && (
                 <p className="empty-message">
-                  Create your first project to start
-                  writing.
+                  Create your first project to
+                  start writing.
                 </p>
               )}
 
@@ -421,29 +500,61 @@ function DashboardPage() {
 
               <div>
                 <h2>Overview</h2>
-                <span>All your writing in one place</span>
+                <span>
+                  All your writing in one place
+                </span>
               </div>
             </div>
 
             <div className="stat-grid">
               <div className="stat-item">
-                <strong>{projects.length}</strong>
+                <strong>
+                  {projects.length}
+                </strong>
+
                 <span>Projects</span>
               </div>
 
               <div className="stat-item">
-                <strong>—</strong>
-                <span>Words this month</span>
+                <strong>
+                  {monthlyWords.toLocaleString()}
+                </strong>
+
+                <span>
+                  Words this month
+                </span>
               </div>
 
               <div className="stat-item">
-                <strong>—</strong>
-                <span>Daily average</span>
+                <strong>
+                  {dailyAverage.toLocaleString()}
+                </strong>
+
+                <span>
+                  Daily average
+                </span>
               </div>
 
               <div className="stat-item">
-                <strong>—</strong>
-                <span>Best day</span>
+                <strong>
+                  {bestDay.wordsWritten > 0
+                    ? bestDay.wordsWritten.toLocaleString()
+                    : '—'}
+                </strong>
+
+                <span>
+                  {bestDay.wordsWritten > 0
+                    ? `Best day · ${new Date(
+                        `${bestDay.date}T00:00:00`,
+                      ).toLocaleDateString(
+                        'en-US',
+                        {
+                          month: 'short',
+                          day: 'numeric',
+                        },
+                      )}`
+                    : 'Best day'}
+                </span>
               </div>
             </div>
 
@@ -465,35 +576,40 @@ function DashboardPage() {
 
               <div>
                 <h2>Quick Start</h2>
-                <span>Continue where you left off</span>
+                <span>
+                  Continue where you left off
+                </span>
               </div>
             </div>
 
             {projects.length === 0 ? (
               <p className="empty-message">
-                Create a project to start writing.
+                Create a project to start
+                writing.
               </p>
             ) : (
               <div className="quick-actions">
-                {projects.slice(0, 3).map((project) => (
-                  <Link
-                    key={project.id}
-                    to={`/projects/${project.id}`}
-                    className="quick-project"
-                  >
-                    <span>✦</span>
+                {projects
+                  .slice(0, 3)
+                  .map((project) => (
+                    <Link
+                      key={project.id}
+                      to={`/projects/${project.id}`}
+                      className="quick-project"
+                    >
+                      <span>✦</span>
 
-                    <div>
-                      <strong>
-                        {project.title}
-                      </strong>
+                      <div>
+                        <strong>
+                          {project.title}
+                        </strong>
 
-                      <small>
-                        Continue writing →
-                      </small>
-                    </div>
-                  </Link>
-                ))}
+                        <small>
+                          Continue writing →
+                        </small>
+                      </div>
+                    </Link>
+                  ))}
               </div>
             )}
           </section>
@@ -506,11 +622,15 @@ function DashboardPage() {
 
               <div>
                 <h2>New Project</h2>
-                <span>Start a new story</span>
+                <span>
+                  Start a new story
+                </span>
               </div>
             </div>
 
-            <form onSubmit={handleCreateProject}>
+            <form
+              onSubmit={handleCreateProject}
+            >
               <label>
                 Title
 
@@ -562,6 +682,7 @@ function DashboardPage() {
               </button>
             </form>
           </section>
+
         </div>
       </main>
     </div>
