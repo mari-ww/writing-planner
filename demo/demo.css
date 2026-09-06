@@ -1,0 +1,122 @@
+.demo-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+
+  padding: 10px 20px;
+
+  background: #344d39;
+  color: #f7f1df;
+
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+
+.demo-notice {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1100;
+
+  width: 280px;
+  padding: 14px 16px 18px;
+
+  background: #f7f1df;
+  color: #4b4c3e;
+
+  border: 1px solid #ddd4bb;
+  border-radius: 12px;
+
+  box-shadow: 0 8px 24px rgba(52, 77, 57, 0.16);
+
+  font-size: 12px;
+  line-height: 1.45;
+
+  animation: demoNoticeIn 0.2s ease;
+
+  overflow: hidden;
+}
+
+.demo-notice strong {
+  display: block;
+  margin-bottom: 3px;
+
+  color: #566a49;
+  font-size: 13px;
+}
+
+.demo-notice p {
+  margin: 0;
+  padding-right: 18px;
+}
+
+.demo-notice button {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+
+  width: 20px;
+  height: 20px;
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+  color: #8a8a76;
+
+  font-size: 16px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.demo-notice button:hover {
+  background: transparent;
+  color: #4b4c3e;
+  transform: none;
+}
+
+/* Barra de tempo */
+.demo-notice::after {
+  content: '';
+
+  position: absolute;
+  left: 0;
+  bottom: 0;
+
+  width: 100%;
+  height: 3px;
+
+  background: #687b59;
+
+  transform-origin: left;
+  animation: demoNoticeProgress 3s linear forwards;
+}
+
+@keyframes demoNoticeProgress {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes demoNoticeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
