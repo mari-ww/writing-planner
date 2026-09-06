@@ -79,23 +79,13 @@ Projects and chapters can be permanently deleted with confirmation before the ac
 
 > This is a static visual demo created to provide a quick preview of the application's interface and user experience.
 
-### 📸 Preview
-
-![Dashboard](demo/dashboard.png)
-
-![Chapter Creation](demo/chapter.png)
-
 ---
 
 ## 📸 Preview
 
-_Add screenshot_
+![Dashboard](demo/dashboard.png)
 
-<!--
-![Dashboard](assets/dashboard.png)
-![Project](assets/project.png)
-![Chapter](assets/chapter.png)
--->
+![Chapter Creation](demo/chapter.png)
 
 ---
 
