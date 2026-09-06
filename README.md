@@ -2,6 +2,8 @@
 
 > A cozy writing workspace for organizing stories, chapters, characters, tasks, and writing progress.
 
+[✦ Open Interactive Demo](https://mari-ww.github.io/writing-planner/demo/)
+
 Writing Planner is a full-stack web application designed to give writers a simple and focused place to manage their stories and keep track of their writing activity.
 
 The project was built as a portfolio application, with an emphasis on clean architecture, practical full-stack development, and a calm interface designed specifically for writers.
@@ -73,13 +75,15 @@ Projects and chapters can be permanently deleted with confirmation before the ac
 
 ### Live Demo
 
-[Open the interactive demo](DEMO_URL)
+[Open the interactive demo](https://mari-ww.github.io/writing-planner/demo/)
 
 > This is a static visual demo created to provide a quick preview of the application's interface and user experience.
 
-### Video Demo
+### 📸 Preview
 
-[Watch the full application demo](VIDEO_URL)
+![Dashboard](demo/dashboard.png)
+
+![Chapter Creation](demo/chapter.png)
 
 ---
 
@@ -147,7 +151,7 @@ The application is divided into a frontend and backend that communicate through 
 │     PostgreSQL       │
 │      Database        │
 └──────────────────────┘
-````
+```
 
 The backend follows a layered structure to separate responsibilities between routes, services, repositories, models, and schemas.
 
@@ -176,6 +180,11 @@ writing-planner/
 │       ├── pages/
 │       ├── styles/
 │       └── types/
+│
+├── demo/
+│   ├── index.html
+│   ├── demo.js
+│   └── demo.css
 │
 ├── docker-compose.yml
 ├── README.md
@@ -234,10 +243,10 @@ This allows the dashboard to display global writing statistics rather than limit
 
 Make sure you have installed:
 
-* Docker
-* Docker Compose
-* Node.js
-* npm
+- Docker
+- Docker Compose
+- Node.js
+- npm
 
 ### Clone the repository
 
@@ -286,17 +295,17 @@ The tests cover important application behavior, including writing tracking and A
 
 Building Writing Planner helped me practice several aspects of full-stack application development:
 
-* Designing a REST API with FastAPI
-* Structuring a backend using services and repositories
-* Working with PostgreSQL and SQLAlchemy
-* Managing database changes with Alembic
-* Building a React + TypeScript application
-* Managing frontend API communication
-* Designing reusable application pages and components
-* Implementing automatic writing activity tracking
-* Writing automated backend tests
-* Using Docker to manage the development environment
-* Designing an interface around a specific user workflow
+- Designing a REST API with FastAPI
+- Structuring a backend using services and repositories
+- Working with PostgreSQL and SQLAlchemy
+- Managing database changes with Alembic
+- Building a React + TypeScript application
+- Managing frontend API communication
+- Designing reusable application pages and components
+- Implementing automatic writing activity tracking
+- Writing automated backend tests
+- Using Docker to manage the development environment
+- Designing an interface around a specific user workflow
 
 ---
 
@@ -306,12 +315,12 @@ The interface was designed around the idea of creating a calm and focused writin
 
 The visual language uses:
 
-* Warm cream backgrounds
-* Sage green accents
-* Rounded cards
-* Soft borders
-* Minimal visual noise
-* Compact information sections
+- Warm cream backgrounds
+- Sage green accents
+- Rounded cards
+- Soft borders
+- Minimal visual noise
+- Compact information sections
 
 The goal is to make the application feel more like a personal writing workspace than a traditional productivity dashboard.
 
@@ -321,15 +330,15 @@ The goal is to make the application feel more like a personal writing workspace 
 
 Possible future improvements include:
 
-* [ ] More detailed writing analytics
-* [ ] Custom daily writing goals
-* [ ] Chapter progress indicators
-* [ ] Drag-and-drop chapter ordering
-* [ ] Rich text editing
-* [ ] Character relationship visualization
-* [ ] Exporting stories
-* [ ] Cloud deployment
-* [ ] User profile customization
+- [ ] More detailed writing analytics
+- [ ] Custom daily writing goals
+- [ ] Chapter progress indicators
+- [ ] Drag-and-drop chapter ordering
+- [ ] Rich text editing
+- [ ] Character relationship visualization
+- [ ] Exporting stories
+- [ ] Deploy the full-stack application
+- [ ] User profile customization
 
 ---
 
