@@ -5,6 +5,9 @@ import AuthPage from './pages/AuthPage'
 import DashboardPage from './pages/DashboardPage'
 import ProjectPage from './pages/ProjectPage'
 import ChapterPage from './pages/ChapterPage'
+import ProjectsPage from './pages/ProjectsPage'
+import TasksPage from './pages/TasksPage'
+import CharactersPage from './pages/CharactersPage'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -23,8 +26,17 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<DashboardPage />} />
+        <Route path="/projects" element={<ProjectsPage />} />
+        <Route path="/tasks" element={<TasksPage />} />
+        <Route
+          path="/characters"
+          element={<CharactersPage />}
+        />
         <Route path="/projects/:projectId" element={<ProjectPage />} />
-        <Route path="/projects/:projectId/chapters/:chapterId" element={<ChapterPage />} />
+        <Route
+          path="/projects/:projectId/chapters/:chapterId"
+          element={<ChapterPage />}
+        />
       </Routes>
     </BrowserRouter>
   )

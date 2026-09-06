@@ -45,6 +45,14 @@ class ChapterService:
 
         chapter = self.repository.create(db, chapter)
 
+        words_written = count_words(chapter.content)
+
+        self.daily_writing_service.record_words(
+            db,
+            chapter.project_id,
+            words_written,
+        )
+
         return self.to_response(chapter)
 
     def list_by_project(
